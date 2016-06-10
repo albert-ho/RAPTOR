@@ -1,0 +1,21 @@
+# Clients
+@@@@@ CURRENTLY ADDED INTO CLIENT.TXT
+plink.cs.uwaterloo.ca
+planetlab1.acis.ufl.edu
+planetlab2.acis.ufl.edu
+pl1.eng.monash.edu.au
+planetlab2.rutgers.edu
+
+# Client slow
+
+# Servers
+planet-lab1.itba.edu.ar
+planet-lab2.itba.edu.ar
+
+# SERVERS TIMED OUT
+planetlab2.comp.nus.edu.sg
+planetlab1.cs.uml.edu (currently in bad nodes)
+
+
+# Client needs obfsproxy
+pl-dccd-02.cua.uam.mx

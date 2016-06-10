@@ -1,0 +1,4 @@
+planet-lab2.itba.edu.ar
+planetlab1.cs.cornell.edu
+planet-lab1.itba.edu.ar
+planetlab1.c3sl.ufpr.br

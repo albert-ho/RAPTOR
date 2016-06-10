@@ -1,0 +1,145 @@
+#!/bin/bash
+
+#-----------------------------
+# Purpose: Set up initial configurations for Clients to run modern Tor version
+#-----------------------------
+
+# Linux guidelines for ssh http://linux.die.net/man/1/ssh
+# Bash guidelines http://tldp.org/LDP/Bash-Beginners-Guide/html/
+
+
+# Initial stuff for setup
+# Might need to use option "No Strict Host Key Checking" for all machines
+initialSetup() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "sudo yum -y --nogpgcheck install gcc; sudo yum -y install libevent-devel; sudo yum -y --nogpgcheck install openssl-devel; sudo yum -y --nogpgcheck install make; sudo yum -y --nogpgcheck install git; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+# Store IP address of each client node into client_ip.txt
+storeIP() {
+	while read line
+	do
+		echo $line
+		ssh -n princeton_raptor@"$line" "hostname -i > client_ip.txt;" &
+	done < nodes/client.txt
+}
+
+
+# Update Python to 2.7.11
+updatePython() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "sudo yum -y --nogpgcheck install bzip2-devel; wget --no-check-certificate https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz; tar -xzf Python-2.7.11.tgz; cd Python-2.7.11; ./configure; make; sudo make install; wget --no-check-certificate http://curl.haxx.se/ca/cacert.pem; mv cacert.pem ca-bundle.crt; sudo mv ca-bundle.crt /etc/pki/tls/certs; wget --no-check-certificate https://bootstrap.pypa.io/ez_setup.py; sudo /usr/local/bin/python ez_setup.py --insecure; cd ~/;" &
+	done < nodes/client.txt
+}
+
+# Update LibEvent to 2.0.22
+updateLibEvent() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "wget -O "libevent.tar.gz" https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz; tar -zxf libevent.tar.gz; cd libevent-2.0.22-stable; ./configure && make; sudo make install; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+# Update OpenSSL to 1.0.2a
+updateOpenSSL() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "wget --no-check-certificate http://ftp.openssl.org/source/old/1.0.2/openssl-1.0.2a.tar.gz; tar -zxf openssl-1.0.2a.tar.gz; cd openssl-1.0.2a; sudo ./config; make clean; make; make test; sudo make install; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+# Install Tor 2.7.5 (removing any old versions if they exist)
+installTor() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "wget https://archive.torproject.org/tor-package-archive/tor-0.2.7.5.tar.gz; tar -zxvf tor-0.2.7.5.tar.gz; rm -r tor; mv tor-0.2.7.5 tor; cd tor; ./configure --with-libevent-dir=/usr/local/lib/ --with-openssl-dir=/usr/local/ssl/; make; cd /usr/local/etc; sudo mkdir tor; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+# Install Privoxy
+# Remove '\' in front of '$a' if entering manually into command line, but '\' needed when running bash script
+installPrivoxy() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "sudo yum -y install privoxy; sudo sed 's/^#http_proxy.*/http_proxy = http:\/\/localhost:8118\//' /etc/wgetrc > wgetrc; sudo mv wgetrc /etc/wgetrc; sudo sed -i '\$a forward-socks4a \/ 127.0.0.1:9050 .' /etc/privoxy/config; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+# Install Obfsproxy
+installObfsproxy() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "git clone https://git.torproject.org/pluggable-transports/obfsproxy.git; cd obfsproxy; sudo /usr/local/bin/python setup.py install; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+# Install WireShark 1.4.1
+# Use nogpgcheck to avoid some key value error in python on PlanetLab
+installWireShark() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "sudo yum -y remove wireshark; sudo yum -y --nogpgcheck install bison byacc flex libpcap-devel gtk2-devel; sudo wget --no-check-certificate https://www.wireshark.org/download/src/all-versions/wireshark-1.4.1.tar.bz2; tar -xvjf wireshark-1.4.1.tar.bz2; cd wireshark-1.4.1; ./configure; make; sudo make install; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+# Download the parse_client.py script onto each client machine
+getParseScript() {
+	while read line
+	do
+	echo $line
+	scp simulation/parse_client.py princeton_raptor@"$line":~ &
+	done < nodes/client.txt
+}
+
+
+# @@@@@@@@@@@ UPDATE THIS, IT DOES NOT INCLUDE WIRESHARK OR NEW INITIAL-SETUP @@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Do all the previous tasks in one command
+allInOne() {
+	while read line
+	do
+	echo $line
+	ssh -o StrictHostKeyChecking=no princeton_raptor@"$line" "sudo yum -y --nogpgcheck install gcc; sudo yum -y install libevent-devel; sudo yum -y --nogpgcheck install openssl-devel; sudo yum -y --nogpgcheck install make; sudo yum -y --nogpgcheck install git; cd ~/;
+	@@@@@@ REMOVE @@@@@@@@@@@@@ sudo yum -y --nogpgcheck install wireshark; cd ~/; @@@@@@@@@@@@@@@@@@@@2
+	sudo yum -y --nogpgcheck install bzip2-devel; wget --no-check-certificate https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz; tar -xzf Python-2.7.11.tgz; cd Python-2.7.11; ./configure; make; sudo make install; wget --no-check-certificate https://bootstrap.pypa.io/ez_setup.py; sudo /usr/local/bin/python ez_setup.py --insecure; cd ~/;
+	wget -O libevent.tar.gz https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz; tar -zxf libevent.tar.gz; cd libevent-2.0.22-stable; ./configure && make; sudo make install; cd ~/;
+	wget --no-check-certificate https://www.openssl.org/source/openssl-1.0.2a.tar.gz; tar -zxf openssl-1.0.2a.tar.gz; cd openssl-1.0.2a; sudo ./config; make clean; make; make test; sudo make install; cd ~/;
+	wget https://archive.torproject.org/tor-package-archive/tor-0.2.7.5.tar.gz; tar -zxvf tor-0.2.7.5.tar.gz; rm -r tor; mv tor-0.2.7.5 tor; cd tor; ./configure --with-libevent-dir=/usr/local/lib/ --with-openssl-dir=/usr/local/ssl/; make; cd /usr/local/etc; sudo mkdir tor; cd ~/;
+	sudo yum -y install privoxy; sudo sed 's/^#http_proxy.*/http_proxy = http:\/\/localhost:8118\//' /etc/wgetrc > wgetrc; sudo mv wgetrc /etc/wgetrc; sudo sed -i '\$a forward-socks4a \/ 127.0.0.1:9050 .' /etc/privoxy/config; cd ~/;
+	git clone https://git.torproject.org/pluggable-transports/obfsproxy.git; cd obfsproxy; sudo /usr/local/bin/python setup.py install; cd ~/;" &
+	done < nodes/client.txt
+}
+
+
+#-----------------------------
+# MAIN
+#-----------------------------
+#initialSetup
+#storeIP
+#updatePython
+#updateLibEvent
+#updateOpenSSL
+#installTor
+#installPrivoxy
+#installObfsproxy
+#installWireShark
+#getParseScript
+#allInOne
+

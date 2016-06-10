@@ -1,0 +1,11 @@
+Hi! This is Albert.
+
+For questions that this readme does not touch upon, you can contact me at (adho@princeton.edu).
+
+Folders:
+"setup/" -> Has all the scripts needed to obtain and setup your PlanetLab machines to run the simulations
+"simulation/" -> Has the script to perform the simulation in one go (generate and collect data)
+"analysis/" -> Has the scripts to analyze the traffic data once it is collected
+
+Instructions:
+

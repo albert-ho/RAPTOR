@@ -1,0 +1,66 @@
+@@@@@@@@@@@@@@@ BAD CLIENTS @@@@@@@@@@@@@@@@
+
+# Connection timed out
+netapp6.cs.kookmin.ac.kr
+planetlab-01.vt.nodes.planet-lab.org
+planetlab-04.vt.nodes.planet-lab.org
+planetlab2.cs.purdue.edu
+ricepl-2.cs.rice.edu
+planet3.cc.gt.atl.ga.us
+planetlab1.arizona-gigapop.net
+planetlab1.fit.vutbr.cz
+plab3.eece.ksu.edu
+
+# Remote host identification change (man-in-the-middle threat)
+planetlab2.koganei.itrc.net
+
+# Connection reset by peer
+netapp7.cs.kookmin.ac.kr
+
+# Connection refused
+planetlab1.comp.nus.edu.sg
+
+# Permission denied
+planetlab-2.ssvl.kth.se
+
+# Just didn't install any of the setup requirements?
+planetlab-4.eecs.cwru.edu
+
+# Couldn't connect with Tor
+planet1.pnl.nitech.ac.jp
+
+# Had issues connecting with Tor (handshake)
+planetlab1.temple.edu
+
+# Takes a while to start Tor
+planetlab-1.sjtu.edu.cn
+
+# Didn't install obfsproxy
+pl-dccd-01.cua.uam.mx
+
+@@@@@@@@@@ BAD SERVERS @@@@@@@@@@@@@@@@@@
+
+# Connection timed out
+planetlab5.ie.cuhk.edu.hk
+planetlab3.cnds.jhu.edu
+cs-planetlab4.cs.surrey.sfu.ca
+planetlab3.arizona-gigapop.net
+planet4.cc.gt.atl.ga.us
+pl-node-0.csl.sri.com
+planetlab2.csee.usf.edu
+planetlab3.comp.nus.edu.sg
+planetlab1.tsuniv.edu
+
+# Just wont ssh into it
+planetlab2.tsuniv.edu
+
+# Remote host identification changed
+planetlab1.koganei.itrc.net
+pl4.cs.unm.edu
+planetlab2.cti.espol.edu.ec
+
+# Read only system
+planetlab3.cs.uoregon.edu
+
+# Connection refused
+planetlabtwo.ccs.neu.edu
