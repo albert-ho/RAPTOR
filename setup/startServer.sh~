@@ -20,5 +20,5 @@ checkHasImage() {
 	done < $path
 }
 
-startServer scripts_txt/server.txt
-#checkHasImage scripts_txt/server.txt
+startServer nodes/server.txt
+#checkHasImage nodes/server.txt

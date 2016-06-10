@@ -16,7 +16,7 @@ checkHasImage() {
 	echo "@@@@@@@"
 	echo $line
 	echo "@@@@@@@"
-	ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -n princeton_raptor@"$line" "ls /var/www/html"
+	ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -n princeton_raptor@"$line" "ls /var/www/html/image.png"
 	done < $path
 }
 

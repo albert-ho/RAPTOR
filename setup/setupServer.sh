@@ -52,7 +52,7 @@ storeImage() {
 	local path="$1"
 	while read server
 	do
-	ssh -n princeton_raptor@$server "cd /var/www/html; sudo touch index.html; sudo wget http://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x21600x21600.A2.png; cd ~/;" &
+	ssh -n princeton_raptor@$server "cd /var/www/html; sudo touch index.html; sudo wget http://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x21600x21600.A2.png; sudo mv world.topo.bathy.200407.3x21600x21600.A2.png image.png; cd ~/;" &
 	done < $path
 }
 

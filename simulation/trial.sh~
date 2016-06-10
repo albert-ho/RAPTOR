@@ -28,7 +28,7 @@ runTrial() {
 	while read -r client && read -r server <&3
 	do
 		ssh -o StrictHostKeyChecking=no princeton_raptor@"$server" "sudo /etc/init.d/httpd start; sudo /usr/sbin/tcpdump -w server -n -U & sleep $time; sudo pkill tcpdump;" &
-		ssh -o StrictHostKeyChecking=no princeton_raptor@"$client" "sudo /usr/sbin/tcpdump -w client -n -u & sudo wget --output-file=wget_log.txt http://$server:7015/world.topo.bathy.200407.3x21600x21600.A2.png & sleep $time; sudo pkill tcpdump; rm -f *.png*;" &
+		ssh -o StrictHostKeyChecking=no princeton_raptor@"$client" "sudo /usr/sbin/tcpdump -w client -n -u & sudo wget --output-file=wget_log.txt http://$server:7015/image.png & sleep $time; sudo pkill tcpdump; rm -f *.png*;" &
 	done < nodes/client.txt 3< nodes/server.txt
 }
 
@@ -45,13 +45,13 @@ convertTraffic() {
 # Transfer traffic .txt files from client and server nodes into local repository
 # INPUT: Path to folder for data storage
 transferTraffic() {
-	local path="$1"
+	local data_path="$1"
 	local i=0
 	while read client && read server <&3
 	do
 		i=$((i+1))
-		scp -o ConnectTimeout=10 princeton_raptor@"$client":client.txt $path/data_raw/client/client"$i".txt &
-		scp -o ConnectTimeout=10 princeton_raptor@"$server":server.txt $path/data_raw/server/server"$i".txt &
+		scp -o ConnectTimeout=10 princeton_raptor@"$client":client.txt $data_path/parsed/client/client"$i".txt &
+		scp -o ConnectTimeout=10 princeton_raptor@"$server":server.txt $data_path/parsed/server/server"$i".txt &
 	done < nodes/client.txt 3< nodes/server.txt
 }
 
@@ -92,7 +92,6 @@ allInOne() {
 		convertTraffic & sleep 25
 		echo "@@@@@@@@@@@@ TRANSFER @@@@@@@@@@@@@@@@@@"
 		transferTraffic "Data/Trial$i" & sleep 30
-		getIP "Data/Trial$i" & sleep 25
 		#checkWget "Data/Trial$i" # POSSIBLY REMOVE?????
 		echo "@@@@@@@@@@@@ PYTHON @@@@@@@@@@@@@@@@@@"
 		runPython $i &
