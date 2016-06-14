@@ -41,8 +41,6 @@ pl-dccd-01.cua.uam.mx
 
 @@@@@@@@@@ BAD SERVERS @@@@@@@@@@@@@@@@@@
 
-# Tcpdump fails to capture traffic
-planet-lab1.itba.edu.ar
 
 planetlab2.unr.edu
 

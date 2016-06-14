@@ -105,7 +105,7 @@ getParseScript() {
 	while read line
 	do
 	echo $line
-	scp Raptor/simulation/parse_client.py princeton_raptor@"$line":~ &
+	scp simulation/parse_client.py princeton_raptor@"$line":~ &
 	done < nodes/client.txt
 }
 

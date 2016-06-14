@@ -25,8 +25,8 @@ for item in list:
 # Getting the planetlab server??
 api_server = xmlrpclib.ServerProxy('https://www.planet-lab.org/PLCAPI/')
 
-# only add nodes active in the past day
-length = 30*24*60*60
+# only add nodes active in the past year
+length = 365*24*60*60
 now = time.time()
 
 # login credentials

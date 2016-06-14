@@ -4,7 +4,7 @@ testServer() {
 	while read line
 	do
 		echo $line
-		ssh -n princeton_raptor@"$line" "ls /var/www/html/image.png;"
+		ssh -n princeton_raptor@"$line" "hostname -i"
 	done < ../nodes/server.txt
 }
 

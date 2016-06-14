@@ -1,10 +1,10 @@
 planetlab1.utdallas.edu # Connection time out
 planetlab1.eecs.umich.edu # Conenction time out
 planetlab1.cs.ubc.ca # Connection time out
-planetlab1.warsaw.rd.tp.pl # Connection time out
-planetlab1.sfc.wide.ad.jp # Connection time out
-pl2.cs.montana.edu # Permission denied
-plnode-04.gpolab.bbn.com # connection time out
+planetlab1.warsaw.rd.tp.pl
+planetlab1.sfc.wide.ad.jp
+pl2.cs.montana.edu
+plnode-04.gpolab.bbn.com
 planetlab1.netlab.uky.edu
 planetlab2.sfc.wide.ad.jp
 kc-sce-plab2.umkc.edu
@@ -18,7 +18,7 @@ pl2.zju.edu.cn
 planetlab1.bgu.ac.il
 planetlab2.cs.columbia.edu
 planetlab3.cs.columbia.edu
-node1.planetlab.albany.edu # GOOD
+node1.planetlab.albany.edu
 planetlab3.ucsd.edu
 planetlab1.cs.columbia.edu
 planetlab1.clemson.edu

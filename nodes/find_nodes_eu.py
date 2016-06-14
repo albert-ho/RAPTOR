@@ -23,7 +23,7 @@ for item in list:
 	badNodes[item] = None
 
 # Getting the planetlab server??
-api_server = xmlrpclib.ServerProxy('https://www.planet-lab.org/PLCAPI/')
+api_server = xmlrpclib.ServerProxy('https://www.planet-lab.eu/PLCAPI/')
 
 # only add nodes active in the past month
 length = 30*24*60*60
