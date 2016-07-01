@@ -46,5 +46,3 @@ useObfs4() {
 #------------------
 useNone
 #useScrambleSuit
-
-#pl-dccd-02.cua.uam.mx does not have obfsproxy installed

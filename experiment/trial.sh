@@ -97,8 +97,9 @@ checkWget() {
 # Run all the commands in one go for some number of trials
 # INPUT: Index of starting trial, Index of ending trial
 allInOne() {
-	local startTrial=$1
-	local endTrial=$2
+	local data_path=$1
+	local startTrial=$2
+	local endTrial=$3	
 	for i in `seq $startTrial $endTrial`;
 	do
 		echo "@@@@@@@@@@@@ NODES @@@@@@@@@@@@@@@@@@"
@@ -106,14 +107,14 @@ allInOne() {
 		sh setup/usePlugTrans.sh
 		restartNodes & sleep 30
 		echo "@@@@@@@@@@@@ TRIAL @@@@@@@@@@@@@@@@@@"
-		newTrial "data/trial$i"
+		newTrial "$data_path/trial$i"
 		runTrial 310 & sleep 340
 		echo "@@@@@@@@@@@@ CONVERT @@@@@@@@@@@@@@@@@@"
 		convertTraffic & sleep 30
 		echo "@@@@@@@@@@@@ PARSE @@@@@@@@@@@@@@@@@@"
 		parseTraffic $i & sleep 30
 		echo "@@@@@@@@@@@@ TRANSFER @@@@@@@@@@@@@@@@@@"
-		transferTraffic "data/trial$i" & sleep 30
+		transferTraffic "$data_path/trial$i" & sleep 30
 		sleep 120
 
 		#checkWget "Data/Trial$i" # POSSIBLY REMOVE?????
@@ -123,7 +124,7 @@ allInOne() {
 #----------------------------------------
 # MAIN
 #----------------------------------------
-allInOne $1 $2
+allInOne $1 $2 $3
 #convertTraffic
 #parseTraffic
 #transferTraffic "data/trial1"

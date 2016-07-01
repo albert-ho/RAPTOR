@@ -9,7 +9,7 @@ startClient() {
 	do
 		echo "Starting Client" $line
 		ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no princeton_raptor@"$line" "sudo pkill tor; sudo /etc/init.d/privoxy start > privoxy_log.txt; tor/src/or/tor > log.txt;" &
-	done < nodes/client.txt
+	done < scripts_txt/client.txt
 }
 
 startClient
