@@ -44,5 +44,5 @@ useObfs4() {
 #------------------
 # MAIN
 #------------------
-useNone
-#useScrambleSuit
+#useNone
+useScrambleSuit

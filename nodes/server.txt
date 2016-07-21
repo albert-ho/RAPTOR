@@ -11,7 +11,6 @@ saturn.planetlab.carleton.ca
 planetlab3.eecs.umich.edu
 ricepl-5.cs.rice.edu
 node2.planetlab.mathcs.emory.edu
-planet2.pnl.nitech.ac.jp
 planetlab-n2.wand.net.nz
 planetlab4.cs.uoregon.edu
 planetlab1.cs.unc.edu

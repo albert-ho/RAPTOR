@@ -8,7 +8,7 @@ testClient() {
 		echo "Testing Client" $client
 		echo "@@@@@@@@@@@@@@"
 		ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -n princeton_raptor@"$client" "cat log.txt; cat privoxy_log.txt;"
-	done < noes/client.txt
+	done < nodes/client.txt
 }
 
 testClient
