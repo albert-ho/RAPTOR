@@ -1,77 +1,50 @@
 #!/bin/bash
 
-
-# Create new repository to store experiment data
-# INPUT: Path to folder for data storage
-newTrialFolder() {
-	local path="$1"
-	mkdir $path
+main() {
 	
-	mkdir $path/client
-	mkdir $path/server
-	mkdir $path/logs
+	# Create the new folder and sub-folders for the trial running.
+	local path="$1";
+	local bridge="$2";
+	
+	mkdir $path;
+	mkdir $path/client;
+	mkdir $path/server;
+	mkdir $path/logs;
+	
+	cp nodes/client.txt $path;
+	cp nodes/server.txt $path;
+	cp bridges/$bridge.txt $path;
 
-	cp nodes/client.txt $path
-	cp nodes/server.txt $path
-}
+	# Have server nodes start httpd & (kill old processes)
+	vxargs -y -a nodes/server.txt -o $path/logs/log1/ -P 30 -t 10 ssh princeton_raptor@{} "sudo pkill httpd; sudo /etc/init.d/httpd start &"
 
+	# Have client nodes change their torrc files for the appropriate pluggable transport (using while loop)
+	sh usePlugTrans.sh
 
-# Restart Tor, Privoxy on Clients, and Httpd on Servers
-restartNodes() {
+	# Have client nodes start Tor and privoxy & (kill old processes), also clean up old image files
+	vxargs -y -a nodes/client.txt -o $path/logs/log2/ -P 30 -t 10 ssh princeton_raptor@{} "rm -f *.png*; sudo pkill privoxy; sudo pkill tor; sudo /etc/init.d/privoxy start; tor/src/or/tor &" 
+
+	# Have client nodes save file with name of corresponding server for experiment (using while loop)
 	while read client && read server <&3
 	do
-		ssh -o StrictHostKeyChecking=no princeton_raptor@"$client" "rm -f *.png*; sudo pkill tor; sudo /etc/init.d/privoxy start > privoxy_log.txt; tor/src/or/tor; exit;" &
-		#ssh -o StrictHostKeyChecking=no -n princeton_raptor@"$server" "sudo pkill httpd; sudo /etc/init.d/httpd start" &
+		ssh -o StrictHostKeyChecking=no princeton_raptor@"$client" "touch server.txt; echo $server >> server.txt" &
 	done < nodes/client.txt 3< nodes/server.txt
+
+	# Have client nodes perform wget request in sync using server files on them
+	sync_time=$(($(date +%s) + 30));
+	vxargs -y -a nodes/client.txt -o log3/ -P 30 -t 600 ssh princeton_raptor@{} 
+	"remote_time=\$(date +%s); sleep_time=\$(($sync_time - \$remote_time)); sleep \$sleep_time; 
+	server=$(head -1 server.txt); sudo wget http://$server:7015/image.png &"
+
+	# Have client and server nodes both start tcpdump in sync
+	sync_time=$(($(date +%s) + 30));
+	vxargs -y -a nodes/both.txt -o log4/ -P 60 -t 600 ssh princeton_raptor@{} 
+	"remote_time=\$(date +%s); sleep_time=\$(($sync_time - \$remote_time)); sleep \$sleep_time; 
+	sudo /usr/sbin/tcpdump -w capture -n -U & sleep $time; sudo pkill tcpdump;"
+
+	# Have client nodes export capture files into /client/ subfolder
+	vxargs -y -a nodes/client.txt -o log5/ -P 30 -t 60 scp princeton_raptor@{}:capture $trial_path/client/{}
+
+	# Have server nodes export capture files into /server/ subfolder
+	vxargs -y -a nodes/server.txt -o log6/ -P 30 -t 60 scp princeton_raptor@{}:capture $trial_path/server/{}
 }
-
-
-# Run the experiment: each client simultaneously downloading file from each server
-# INPUT: Time duration of download
-runTrial() {
-	local time=$1
-	while read -r client && read -r server <&3
-	do
-		ssh -o StrictHostKeyChecking=no princeton_raptor@"$server" "sudo /etc/init.d/httpd start; sudo /usr/sbin/tcpdump -w server -n -U & sleep $time; sudo pkill tcpdump;" &
-		ssh -o StrictHostKeyChecking=no princeton_raptor@"$client" "sudo /usr/sbin/tcpdump -w client -n -u & sudo wget http://$server:7015/image.png & sleep $time; sudo pkill tcpdump;" &
-	done < nodes/client.txt 3< nodes/server.txt
-}
-
-
-# Transfer traffic .txt files from client and server nodes into local repository
-# INPUT: Path to folder for data storage
-transferTraffic() {
-	local trial_path="$1"
-	while read client && read server <&3
-	do
-		scp -o ConnectTimeout=10 princeton_raptor@"$client":client $trial_path/client/"$client" &
-		scp -o ConnectTimeout=10 princeton_raptor@"$server":server $trial_path/server/"$server" &
-	done < nodes/client.txt 3< nodes/server.txt
-}
-
-
-# Run all the commands in one go for some number of trials
-# INPUT: Path name to trial
-allInOne() {
-	local trial_path=$1
-	local num_nodes=$2
-	echo "@@@@@@@@@@@@    NODES @@@@@@@@@@@@@@@@@@"
-	python experiment/randomize.py "nodes/client.txt"
-	sh setup/usePlugTrans.sh
-	restartNodes & sleep 30
-	echo "@@@@@@@@@@@@    TRIAL @@@@@@@@@@@@@@@@@@"
-	newTrialFolder "$trial_path"
-	runTrial 310 & sleep 340
-	echo "@@@@@@@@@@@@  CONVERT @@@@@@@@@@@@@@@@@@"
-	convertTraffic & sleep 30
-	echo "@@@@@@@@@@@@    PARSE @@@@@@@@@@@@@@@@@@"
-	parseTraffic $i & sleep 30
-	echo "@@@@@@@@@@@@ TRANSFER @@@@@@@@@@@@@@@@@@"
-	transferTraffic "$trial_path" & sleep 30
-	sleep 120
-}
-
-#----------------------------------------
-# MAIN
-#----------------------------------------
-allInOne $1
